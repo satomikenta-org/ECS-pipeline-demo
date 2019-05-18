@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URL=718224435858.dkr.ecr.us-east-2.amazonaws.com/ecs-devops-demo
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building docker image...
+      - docker build -t ecs-devops-demo .
+      - docker tag $REPOSITORY_URL:latest $REPOSITORY_URL:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing image to ECR...
+      - docker push $REPOSITORY_URL:latest 
+      - docker push $REPOSITORY_URL:$IMAGE_TAG
+      - echo Writing image definition file...
+      - printf '[{"name": "ecs-devops-demo", "imageUrl": "%s"}]' $REPOSITORY_URL$IMAGE_TAG > imagedefinitions.json
