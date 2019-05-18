@@ -12,7 +12,7 @@ phases:
       - echo Build started on `date`
       - echo Building docker image...
       - docker build -t ecs-devops-demo .
-      - docker tag ecs-devops-demo:latest $REPOSITORY_URL:$IMAGE_TAG
+      - docker tag ecs-devops-demo:latest $REPOSITORY_URL:latest
   post_build:
     commands:
       - echo Build completed on `date`
