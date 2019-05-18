@@ -8,7 +8,7 @@ app.get('/healthcheck', (req, res) => {
 
 app.get('/', (req, res) => {
   console.log("GET /");
-  res.send("Version 3");
+  res.send({msg: process.env.ENV_FROM_CODEBUILD});
 });
 
 app.listen(port, () => console.log(`listening on port ${port}`));
